@@ -1,142 +1,173 @@
 <!DOCTYPE html>
-<!-- saved from url=(0037)https://kuangdash.gitlab.io/logicsim/ -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="./kuangdash.gitlab.io_files/joint.css">
-    <link href="./kuangdash.gitlab.io_files/select2.min.css" rel="stylesheet">
-    <link href="./kuangdash.gitlab.io_files/w3.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="./kuangdash.gitlab.io_files/style.css">
+   <html lang="zh-CN">
+   <head>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+       <meta content="IE=edge" http-equiv="X-UA-Compatible">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <title>LogicSim · 逻辑表达式可视化</title>
 
+       <!-- Tailwind CSS CDN -->
+       <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- dependencies -->
-    <script src="./kuangdash.gitlab.io_files/jquery.min.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/lodash.min.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/backbone.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/graphlib.min.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/dagre.min.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/joint.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/select2.min.js.下载"></script>
-    <script src="./kuangdash.gitlab.io_files/LogicParser.js.下载"></script>
-</head>
+       <!-- 原有样式依赖 -->
+       <link rel="stylesheet" type="text/css" href="./kuangdash.gitlab.io_files/joint.css">
+       <link href="./kuangdash.gitlab.io_files/select2.min.css" rel="stylesheet">
+       <link href="./kuangdash.gitlab.io_files/w3.css" rel="stylesheet">
+       <link rel="stylesheet" type="text/css" href="./kuangdash.gitlab.io_files/style.css">
 
-<body>
-    <!-- content -->
-    <div class="joint-app">
-        <div class="app-header">
-            <div class="mini-map">
-                <div id="mini-paper" class="joint-paper joint-theme-default" style="background-color: rgba(150, 250, 200, 0.3); width: 75px; height: 75px; left: 112.313px; top: 37.3134px;"><div class="joint-paper-background" joint-selector="background"></div><div class="joint-paper-grid" joint-selector="grid"></div><svg width="100%" height="100%" xmlns:xlink="http://www.w3.org/1999/xlink" joint-selector="svg" id="v-8"><defs joint-selector="defs"></defs><g joint-selector="layers" class="joint-layers"><g joint-selector="back" class="joint-back-layer"></g><g joint-selector="cells" class="joint-cells-layer joint-viewport"></g><g joint-selector="front" class="joint-front-layer"></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>
-                <div id="mini-view" style="border: 2px solid rgb(49, 208, 198); position: absolute; background-color: rgba(250, 200, 200, 0.2); cursor: move; height: 538.308px; width: 1029.35px; left: -364.925px; top: -194.03px;">
-                    <div id="mini-resize"></div>
-                </div>
-            </div>
-            <div class="title-container">
-                <div style="width:33%;float:left;overflow:auto;">
-                    <div class="w3-row" style="margin:1px">
-                        <div class="w3-third w3-btn w3-light-green  w3-hover-green" style="position: relative;overflow: hidden;cursor:pointer">
-                            <img src="./kuangdash.gitlab.io_files/save2.svg" width="15" height="15" class="w3-margin-right">
-                            <span>载入文本</span>
-                            <input type="file" style="position: absolute;
-                            top: 0;
-                            right: 0;
-                            margin: 0;
-                            padding: 0;
-                            font-size: 20px;
-                            cursor: pointer;
-                            opacity: 0;
-                            filter: alpha(opacity=0)" id="fileToLoad">
-                        </div>
-                        <button class="w3-third w3-btn w3-light-blue  w3-hover-blue" onclick="app.saveTextAsFile()"><img src="./kuangdash.gitlab.io_files/upload.svg" width="15" height="15" class="w3-margin-right">保存文本</button>
-                        <input class="w3-third w3-input w3-center" id="inputFileNameToSaveAs" value="默认保存名称">
-                    </div>
+       <!-- dependencies -->
+       <script src="./kuangdash.gitlab.io_files/jquery.min.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/lodash.min.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/backbone.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/graphlib.min.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/dagre.min.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/joint.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/select2.min.js.下载"></script>
+       <script src="./kuangdash.gitlab.io_files/LogicParser.js.下载"></script>
+   </head>
 
+   <body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+       <!-- content -->
+       <div class="joint-app max-w-screen-2xl mx-auto p-4">
 
-                    <textarea style="width:100%;height:60px" id="ReversePol"></textarea>
+           <!-- 页头 -->
+           <div class="app-header bg-white rounded-2xl shadow-sm border border-slate-200 mb-4">
 
-                    <button class="w3-block w3-btn w3-yellow  w3-hover-deep-orange w3-round-large" onclick="app.parseLogic()">解析文本</button>
+               <!-- 小地图 + 标题栏 -->
+               <div class="flex items-start gap-4 p-4 border-b border-slate-200">
 
-                </div>
-                <div style="width:65%;float:left">
-                    <table style="width:100%">
-                        <tbody><tr>
-                            <td colspan="2">
-                                <textarea id="myModel" style="width:100%;height:100px">                            {
-                                nodeArray: [],
-                                linkArray: []
-                            }
-                        </textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button id="LoadButton" class="w3-block w3-btn w3-light-green w3-hover-green" onclick="app.load()"><img src="./kuangdash.gitlab.io_files/save2.svg" width="15" height="15" class="w3-margin-right">文本转图</button>
-                            </td>
-                            <td>
-                                <button id="SaveButton" class="w3-block w3-btn w3-light-blue  w3-hover-blue" onclick="app.save()"><img src="./kuangdash.gitlab.io_files/upload.svg" width="15" height="15" class="w3-margin-right">图转文本</button>
-                            </td>
-                        </tr>
-                    </tbody></table>
-                </div>
-            </div>
-        </div>
+                   <!-- 小地图 -->
+                   <div class="mini-map" style="position: relative;">
+                       <div id="mini-paper" class="joint-paper joint-theme-default" style="background-color: rgba(150,
+ 250, 200, 0.3); width: 75px; height: 75px; left: 112.313px; top: 37.3134px;"></div>
+                       <div id="mini-view" style="border: 2px solid rgb(49, 208, 198); position: absolute;
+ background-color: rgba(250, 200, 200, 0.2); cursor: move;"></div>
+                       <div id="mini-resize"></div>
+                   </div>
 
-        <div class="app-body">
-            <div class="left-container">
+                   <!-- 逆波兰输入区 -->
+                   <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <!-- 左栏：逆波兰表达式 -->
+                       <div class="rounded-xl bg-slate-50 border border-slate-200 p-3">
+                           <h3 class="text-sm font-semibold text-slate-500 mb-2 tracking-wide">逆波兰逻辑表达式</h3>
+                           <div class="flex gap-2 mb-2">
+                               <div class="relative flex-1">
+                                   <input id="fileToLoad" type="file"
+ style="position:absolute;top:0;right:0;margin:0;padding:0;font-size:20px;cursor:pointer;opacity:0;filter:alpha(opacity
+ =0);" class="w-full">
+                                   <div class="w3-btn w3-light-green w3-hover-green w-full text-center bg-emerald-500
+ hover:bg-emerald-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition cursor-pointer">
+                                       <img src="./kuangdash.gitlab.io_files/save2.svg" width="15" height="15"
+ class="w3-margin-right">载入文本
+                                   </div>
+                               </div>
+                               <button onclick="app.saveTextAsFile()" class="w3-btn w3-light-blue w3-hover-blue flex-1
+ bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition">
+                                   <img src="./kuangdash.gitlab.io_files/upload.svg" width="15" height="15"
+ class="w3-margin-right">保存文本
+                               </button>
+                               <input id="inputFileNameToSaveAs" value="默认保存名称" class="w3-input w3-center w-28
+ rounded-lg border border-slate-300 px-3 py-2 text-sm">
+                           </div>
+                           <textarea id="ReversePol" placeholder="输入逆波兰逻辑表达式…" class="w-full h-20 rounded-xl
+ border border-slate-300 p-2 text-sm font-mono"></textarea>
+                           <button onclick="app.parseLogic()" class="w3-btn w3-yellow w3-hover-deep-orange
+ w3-round-large w-full mt-2 bg-amber-400 hover:bg-amber-500 text-amber-900 text-sm font-semibold py-2 px-4 rounded-lg
+ transition">解析文本</button>
+                       </div>
 
-            </div>
-            <div class="main-container">
-                <div id="paper-container" style="height: 201px; width: 402px; left: 489px; top: 260px; position: absolute;">
-                    <div id="paper" style="cursor: grab; background-color: rgba(150, 250, 200, 0.3); width: 101px; height: 101px; left: 150.5px; top: 50px;" class="joint-paper joint-theme-default"><div class="joint-paper-background" joint-selector="background"></div><div class="joint-paper-grid" joint-selector="grid" style="background-image: url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTQiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzIGlkPSJ2LTMiPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuXzAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3QgaWQ9InYtNSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuXzApIi8+PC9zdmc+&quot;);"></div><svg width="100%" height="100%" xmlns:xlink="http://www.w3.org/1999/xlink" joint-selector="svg" id="v-2"><defs joint-selector="defs"></defs><g joint-selector="layers" class="joint-layers" transform="matrix(1,0,0,1,50,50)"><g joint-selector="back" class="joint-back-layer"></g><g joint-selector="cells" class="joint-cells-layer joint-viewport"></g><g joint-selector="front" class="joint-front-layer"></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>
-                </div>
-            </div>
-            <div id="app-resize">
-                <div style="position:absolute;left:-35px;background-image:url(assets/box-arrow-in-right.svg);background-size:100%;width:30px;height:30px;" onclick="
-                app.ResizeBlock()
-                ">
+                       <!-- 右栏：JSON 模型 -->
+                       <div class="rounded-xl bg-slate-50 border border-slate-200 p-3">
+                           <h3 class="text-sm font-semibold text-slate-500 mb-2 tracking-wide">图形模型 JSON</h3>
+                           <textarea id="myModel" class="w-full h-24 rounded-xl border border-slate-300 p-2 text-xs
+ font-mono">                            {
+                                   nodeArray: [],
+                                   linkArray: []
+                               }
+                           </textarea>
+                           <div class="flex gap-2 mt-2">
+                               <button id="LoadButton" onclick="app.load()" class="w3-btn w3-light-green w3-hover-green
+ flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition">
+                                   <img src="./kuangdash.gitlab.io_files/save2.svg" width="15" height="15"
+ class="w3-margin-right">文本转图
+                               </button>
+                               <button id="SaveButton" onclick="app.save()" class="w3-btn w3-light-blue w3-hover-blue
+ flex-1 bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition">
+                                   <img src="./kuangdash.gitlab.io_files/upload.svg" width="15" height="15"
+ class="w3-margin-right">图转文本
+                               </button>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
 
-                </div>
-            </div>
-            <div class="right-container">
-                <div class="w3-row">
-                    <div class="w3-third">
-                        元素名称：
-                    </div>
-                    <input class="w3-twothird" type="text" id="ERName">
-                </div>
-                <div class="w3-row">
-                    <div class="w3-third">
-                        元素备注：
-                    </div>
-                    <textarea class="w3-twothird" id="ERMemo">                    </textarea>
-                </div>
-                <button id="ERSetName" class="w3-block w3-btn w3-yellow  w3-hover-deep-orange w3-round-large" onclick="app.ChangeName()">保存修改</button>
-                <div>
-                    在“解析文本”按钮上面的文本框内输入“逆波兰逻辑表达式”。<br>
-                    “逆波兰逻辑表达式”支持五种逻辑操作符：<br>
-                    {<br>
-                    “.”：“a b .”代表“a”和“b”的逻辑与，<br>
-                    “&lt;”：“a &lt;”代表“a”的逻辑非，<br>
-                    “,”：“a b ,”代表“a”和“b”的逻辑或，<br>
-                    “=”：“a b =”代表“a”和“b”的逻辑等价/同或<br>
-                    “&gt;”：“a b &gt;”代表“a”和“b”的逻辑推出，<br>
-                      }。<br>
-                    逆波兰逻辑表达式组合的举例说明：<br>
-                    {<br>
-                    “a b . fe &gt;”即代表逻辑表达“a 与 b   推出了   fe”，<br>
-                    “a b . fe ge &gt; =”即代表逻辑表达“a 与 b  等价于  fe 推出了 ge”<br>
-                    }。<br>
-                    之后点击“解析文本”按钮，将“逆波兰逻辑表达式”转换为适合图形表示的 JSON 格式，<br>
-                    之后再点击“解析文本”按钮旁的“文本转图”，得到最终的正规图形表示。
-                </div>
-            </div>
-            <div class="bottom-container">
-                <p id="status">JSON format Error, Use Empty Format.</p>
-            </div>
-        </div>
-    </div>
-    <script src="./kuangdash.gitlab.io_files/ViewGen.js.下载">
-    </script>
+           <!-- 主体区域 -->
+           <div class="app-body grid grid-cols-1 lg:grid-cols-[260px_1fr_260px] gap-4">
 
+               <!-- 左栏 -->
+               <div class="left-container"></div>
 
-</body><div class="xl-chrome-ext-bar_4DB361DE-01F7-4376-B494-639E489D19ED" id="xl_chrome_ext_4DB361DE-01F7-4376-B494-639E489D19ED" data-v-app="" style="display: block;"><div class=""><div id="xl_chrome_ext_video_tag_wrapper_4DB361DE-01F7-4376-B494-639E489D19ED" config="[object Object]" uiversion="v2" exception="false" latestvideosrc="" isshowvideotag="false" isshowdownloadbar="true" isshowcloudaddbar="false" latestvideoelement=""><div><div class="_video_op_wrapper_mpbxe_1" config="[object Object]" uiversion="v2" style="display: none;"><ul class="_video_op_list_mpbxe_17"><li class="_op_item_mpbxe_38 _download_mpbxe_44"><span class="_op_icon_mpbxe_24"></span><span class="_op_text_mpbxe_30">下载</span></li><li class="_op_item_mpbxe_38 _screen_mpbxe_50"><span class="_op_icon_mpbxe_24"></span><span class="_op_text_mpbxe_30">投屏</span></li></ul></div></div></div><div class="badge_wrapper_4DB361DE-01F7-4376-B494-639E489D19ED _badge_wrapper_eor63_1" id="badge_wrapper_4DB361DE-01F7-4376-B494-639E489D19ED"><div class="_logo_eor63_20"></div><span class="_line_eor63_27"></span><div class="_text_wrapper_eor63_33"><span class="_download_icon_eor63_39"></span><span class="_text_eor63_33">高速下载</span></div></div><!----><!----><!----><!----></div></div></html>
+               <!-- 中央画布 -->
+               <div class="main-container bg-white rounded-2xl shadow-sm border border-slate-200 relative
+ min-h-[560px]">
+                   <div id="paper-container" style="height: 520px; width: 100%; position: relative;">
+                       <div id="paper" class="joint-paper joint-theme-default h-full w-full rounded-xl"
+ style="background-color: rgba(150, 250, 200, 0.3);"></div>
+                   </div>
+
+                   <div id="app-resize" class="absolute top-1/2 -left-4 -translate-y-1/2">
+                       <div
+ style="position:absolute;left:-35px;background-image:url(assets/box-arrow-in-right.svg);background-size:100%;width:30p
+ x;height:30px;cursor:pointer;" onclick="app.ResizeBlock()"></div>
+                   </div>
+               </div>
+
+               <!-- 右栏：元素属性 -->
+               <div class="right-container bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+                   <h3 class="text-sm font-semibold text-slate-500 mb-3 tracking-wide">元素属性</h3>
+                   <div class="flex items-center gap-2 mb-3">
+                       <span class="w-20 text-sm text-slate-500 shrink-0">元素名称：</span>
+                       <input type="text" id="ERName" class="flex-1 rounded-lg border border-slate-300 px-3 py-2
+ text-sm">
+                   </div>
+                   <div class="flex items-start gap-2 mb-3">
+                       <span class="w-20 text-sm text-slate-500 shrink-0 pt-2">元素备注：</span>
+                       <textarea id="ERMemo" class="flex-1 h-20 rounded-lg border border-slate-300 px-3 py-2
+ text-sm"></textarea>
+                   </div>
+                   <button id="ERSetName" onclick="app.ChangeName()" class="w3-btn w3-yellow w3-hover-deep-orange
+ w3-round-large w-full bg-amber-400 hover:bg-amber-500 text-amber-900 text-sm font-semibold py-2 px-4 rounded-lg
+ transition">保存修改</button>
+
+                   <div class="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-500 leading-relaxed space-y-1">
+                       <p>在“解析文本”按钮上面的文本框内输入“逆波兰逻辑表达式”。<br>
+                       “逆波兰逻辑表达式”支持五种逻辑操作符：<br>
+                       {<br>
+                       “.”：“a b .”代表“a”和“b”的逻辑与，<br>
+                       “&lt;”：“a &lt;”代表“a”的逻辑非，<br>
+                       “,”：“a b ,”代表“a”和“b”的逻辑或，<br>
+                       “=”：“a b =”代表“a”和“b”的逻辑等价/同或<br>
+                       “&gt;”：“a b &gt;”代表“a”和“b”的逻辑推出，<br>
+                         }。<br>
+                       逆波兰逻辑表达式组合的举例说明：<br>
+                       {<br>
+                       “a b . fe &gt;”即代表逻辑表达“a 与 b   推出了   fe”，<br>
+                       “a b . fe ge &gt; =”即代表逻辑表达“a 与 b  等价于  fe 推出了 ge”<br>
+                       }。<br>
+                       之后点击“解析文本”按钮，将“逆波兰逻辑表达式”转换为适合图形表示的 JSON 格式，<br>
+                       之后再点击“解析文本”按钮旁的“文本转图”，得到最终的正规图形表示。</p>
+                   </div>
+               </div>
+           </div>
+
+           <!-- 底部状态栏 -->
+           <div class="bottom-container mt-4">
+               <p id="status" class="bg-white rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-500">JSON
+ format Error, Use Empty Format.</p>
+           </div>
+       </div>
+
+       <script src="./kuangdash.gitlab.io_files/ViewGen.js.下载"></script>
+   </body>
+   </html>
