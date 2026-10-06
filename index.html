@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)https://kuangdash.gitlab.io/logicsim/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="./kuangdash.gitlab.io_files/joint.css">
+    <link href="./kuangdash.gitlab.io_files/select2.min.css" rel="stylesheet">
+    <link href="./kuangdash.gitlab.io_files/w3.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./kuangdash.gitlab.io_files/style.css">
+
+
+    <!-- dependencies -->
+    <script src="./kuangdash.gitlab.io_files/jquery.min.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/lodash.min.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/backbone.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/graphlib.min.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/dagre.min.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/joint.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/select2.min.js.下载"></script>
+    <script src="./kuangdash.gitlab.io_files/LogicParser.js.下载"></script>
+</head>
+
+<body>
+    <!-- content -->
+    <div class="joint-app">
+        <div class="app-header">
+            <div class="mini-map">
+                <div id="mini-paper" class="joint-paper joint-theme-default" style="background-color: rgba(150, 250, 200, 0.3); width: 75px; height: 75px; left: 112.313px; top: 37.3134px;"><div class="joint-paper-background" joint-selector="background"></div><div class="joint-paper-grid" joint-selector="grid"></div><svg width="100%" height="100%" xmlns:xlink="http://www.w3.org/1999/xlink" joint-selector="svg" id="v-8"><defs joint-selector="defs"></defs><g joint-selector="layers" class="joint-layers"><g joint-selector="back" class="joint-back-layer"></g><g joint-selector="cells" class="joint-cells-layer joint-viewport"></g><g joint-selector="front" class="joint-front-layer"></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>
+                <div id="mini-view" style="border: 2px solid rgb(49, 208, 198); position: absolute; background-color: rgba(250, 200, 200, 0.2); cursor: move; height: 538.308px; width: 1029.35px; left: -364.925px; top: -194.03px;">
+                    <div id="mini-resize"></div>
+                </div>
+            </div>
+            <div class="title-container">
+                <div style="width:33%;float:left;overflow:auto;">
+                    <div class="w3-row" style="margin:1px">
+                        <div class="w3-third w3-btn w3-light-green  w3-hover-green" style="position: relative;overflow: hidden;cursor:pointer">
+                            <img src="./kuangdash.gitlab.io_files/save2.svg" width="15" height="15" class="w3-margin-right">
+                            <span>载入文本</span>
+                            <input type="file" style="position: absolute;
+                            top: 0;
+                            right: 0;
+                            margin: 0;
+                            padding: 0;
+                            font-size: 20px;
+                            cursor: pointer;
+                            opacity: 0;
+                            filter: alpha(opacity=0)" id="fileToLoad">
+                        </div>
+                        <button class="w3-third w3-btn w3-light-blue  w3-hover-blue" onclick="app.saveTextAsFile()"><img src="./kuangdash.gitlab.io_files/upload.svg" width="15" height="15" class="w3-margin-right">保存文本</button>
+                        <input class="w3-third w3-input w3-center" id="inputFileNameToSaveAs" value="默认保存名称">
+                    </div>
+
+
+                    <textarea style="width:100%;height:60px" id="ReversePol"></textarea>
+
+                    <button class="w3-block w3-btn w3-yellow  w3-hover-deep-orange w3-round-large" onclick="app.parseLogic()">解析文本</button>
+
+                </div>
+                <div style="width:65%;float:left">
+                    <table style="width:100%">
+                        <tbody><tr>
+                            <td colspan="2">
+                                <textarea id="myModel" style="width:100%;height:100px">                            {
+                                nodeArray: [],
+                                linkArray: []
+                            }
+                        </textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="LoadButton" class="w3-block w3-btn w3-light-green w3-hover-green" onclick="app.load()"><img src="./kuangdash.gitlab.io_files/save2.svg" width="15" height="15" class="w3-margin-right">文本转图</button>
+                            </td>
+                            <td>
+                                <button id="SaveButton" class="w3-block w3-btn w3-light-blue  w3-hover-blue" onclick="app.save()"><img src="./kuangdash.gitlab.io_files/upload.svg" width="15" height="15" class="w3-margin-right">图转文本</button>
+                            </td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-body">
+            <div class="left-container">
+
+            </div>
+            <div class="main-container">
+                <div id="paper-container" style="height: 201px; width: 402px; left: 489px; top: 260px; position: absolute;">
+                    <div id="paper" style="cursor: grab; background-color: rgba(150, 250, 200, 0.3); width: 101px; height: 101px; left: 150.5px; top: 50px;" class="joint-paper joint-theme-default"><div class="joint-paper-background" joint-selector="background"></div><div class="joint-paper-grid" joint-selector="grid" style="background-image: url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTQiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzIGlkPSJ2LTMiPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuXzAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3QgaWQ9InYtNSIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuXzApIi8+PC9zdmc+&quot;);"></div><svg width="100%" height="100%" xmlns:xlink="http://www.w3.org/1999/xlink" joint-selector="svg" id="v-2"><defs joint-selector="defs"></defs><g joint-selector="layers" class="joint-layers" transform="matrix(1,0,0,1,50,50)"><g joint-selector="back" class="joint-back-layer"></g><g joint-selector="cells" class="joint-cells-layer joint-viewport"></g><g joint-selector="front" class="joint-front-layer"></g><g joint-selector="tools" class="joint-tools-layer"></g></g></svg></div>
+                </div>
+            </div>
+            <div id="app-resize">
+                <div style="position:absolute;left:-35px;background-image:url(assets/box-arrow-in-right.svg);background-size:100%;width:30px;height:30px;" onclick="
+                app.ResizeBlock()
+                ">
+
+                </div>
+            </div>
+            <div class="right-container">
+                <div class="w3-row">
+                    <div class="w3-third">
+                        元素名称：
+                    </div>
+                    <input class="w3-twothird" type="text" id="ERName">
+                </div>
+                <div class="w3-row">
+                    <div class="w3-third">
+                        元素备注：
+                    </div>
+                    <textarea class="w3-twothird" id="ERMemo">                    </textarea>
+                </div>
+                <button id="ERSetName" class="w3-block w3-btn w3-yellow  w3-hover-deep-orange w3-round-large" onclick="app.ChangeName()">保存修改</button>
+                <div>
+                    在“解析文本”按钮上面的文本框内输入“逆波兰逻辑表达式”。<br>
+                    “逆波兰逻辑表达式”支持五种逻辑操作符：<br>
+                    {<br>
+                    “.”：“a b .”代表“a”和“b”的逻辑与，<br>
+                    “&lt;”：“a &lt;”代表“a”的逻辑非，<br>
+                    “,”：“a b ,”代表“a”和“b”的逻辑或，<br>
+                    “=”：“a b =”代表“a”和“b”的逻辑等价/同或<br>
+                    “&gt;”：“a b &gt;”代表“a”和“b”的逻辑推出，<br>
+                      }。<br>
+                    逆波兰逻辑表达式组合的举例说明：<br>
+                    {<br>
+                    “a b . fe &gt;”即代表逻辑表达“a 与 b   推出了   fe”，<br>
+                    “a b . fe ge &gt; =”即代表逻辑表达“a 与 b  等价于  fe 推出了 ge”<br>
+                    }。<br>
+                    之后点击“解析文本”按钮，将“逆波兰逻辑表达式”转换为适合图形表示的 JSON 格式，<br>
+                    之后再点击“解析文本”按钮旁的“文本转图”，得到最终的正规图形表示。
+                </div>
+            </div>
+            <div class="bottom-container">
+                <p id="status">JSON format Error, Use Empty Format.</p>
+            </div>
+        </div>
+    </div>
+    <script src="./kuangdash.gitlab.io_files/ViewGen.js.下载">
+    </script>
+
+
+</body><div class="xl-chrome-ext-bar_4DB361DE-01F7-4376-B494-639E489D19ED" id="xl_chrome_ext_4DB361DE-01F7-4376-B494-639E489D19ED" data-v-app="" style="display: block;"><div class=""><div id="xl_chrome_ext_video_tag_wrapper_4DB361DE-01F7-4376-B494-639E489D19ED" config="[object Object]" uiversion="v2" exception="false" latestvideosrc="" isshowvideotag="false" isshowdownloadbar="true" isshowcloudaddbar="false" latestvideoelement=""><div><div class="_video_op_wrapper_mpbxe_1" config="[object Object]" uiversion="v2" style="display: none;"><ul class="_video_op_list_mpbxe_17"><li class="_op_item_mpbxe_38 _download_mpbxe_44"><span class="_op_icon_mpbxe_24"></span><span class="_op_text_mpbxe_30">下载</span></li><li class="_op_item_mpbxe_38 _screen_mpbxe_50"><span class="_op_icon_mpbxe_24"></span><span class="_op_text_mpbxe_30">投屏</span></li></ul></div></div></div><div class="badge_wrapper_4DB361DE-01F7-4376-B494-639E489D19ED _badge_wrapper_eor63_1" id="badge_wrapper_4DB361DE-01F7-4376-B494-639E489D19ED"><div class="_logo_eor63_20"></div><span class="_line_eor63_27"></span><div class="_text_wrapper_eor63_33"><span class="_download_icon_eor63_39"></span><span class="_text_eor63_33">高速下载</span></div></div><!----><!----><!----><!----></div></div></html>
